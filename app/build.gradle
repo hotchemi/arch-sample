@@ -1,30 +1,49 @@
 apply plugin: 'com.android.application'
 
-android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
-    defaultConfig {
-        applicationId "sample.arch.arch_sample"
-        minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+dependencies {
+    // Android dependencies.
+    compile rootProject.ext.supportV4
+    compile rootProject.ext.supportAnnotations
+
+    compile 'com.squareup.sqlbrite2:sqlbrite:2.0.0'
+
+    // Dagger dependencies.
+    compile rootProject.ext.dagger
+    annotationProcessor rootProject.ext.daggerCompiler
+
+    // Third-party dependencies.
+    compile rootProject.ext.butterKnifeRuntime
+    annotationProcessor rootProject.ext.butterKnifeCompiler
+    compile rootProject.ext.timber
+    compile rootProject.ext.rxJava
+    compile rootProject.ext.rxAndroid
+    compile rootProject.ext.rxBinding
+
+    provided rootProject.ext.autoValue
+    annotationProcessor rootProject.ext.autoValue
+    annotationProcessor rootProject.ext.autoValueParcel
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    lintOptions {
+        textOutput 'stdout'
+        textReport true
+        ignore 'InvalidPackage' // Provided AutoValue pulls in Guava and friends. Doesn't end up in APK.
+    }
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 25
+
+        versionCode 1
+        versionName '1.0'
+    }
 }
